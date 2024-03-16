@@ -6,7 +6,7 @@ public class Main {
     public static void main(String[] args) {
         String url = "jdbc:postgresql://localhost:5432/A3_Q1";
         String username = "postgres";
-        String password = "TheAtaraxia"
+        String password = "TheAtaraxia";
 
         try {
             // Connect to the database
