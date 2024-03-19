@@ -2,37 +2,94 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.Statement;
+import java.util.Scanner;
+
 public class Main {
     public static void main(String[] args) {
-        String url = "jdbc:postgresql://localhost:5432/A3_Q1";
-        String username = "postgres";
-        String password = "TheAtaraxia";
+        Functions functions = new Functions();
 
         try {
-            // Connect to the database
-            Class.forName("org.postgresql.Driver");
-            Connection connection = DriverManager.getConnection(url, username, password);
+            // Establish Connection to the PostgreSQL server.
+            Connection connection = functions.getConnection();
             System.out.println("Connected to the PostgreSQL server successfully.");
 
-            // Do Functions Here
-            getAllStudentsName(connection);
+            int option = 1;
+            String student_id_string;
+            int student_id_int;
 
-            // Disconnect from the database
-            connection.close();
-            System.out.println("Disconnected from the PostgreSQL server successfully.");
+            while (option > 0 && option < 5){
+                System.out.println(
+                        "\n Choose an option: \n " +
+                                "1: Display records of all students. \n " +
+                                "2: Add a student. \n " +
+                                "3: Update a student's email. \n " +
+                                "4: Delete a student. \n " +
+                                "0: Exit. \n "
+                );
+
+                Scanner in = new Scanner(System.in);
+                String input = in.nextLine();
+                option = Integer.valueOf(input);
+
+                // Perform the selected operation.
+                switch (option) {
+                    // Display records of all students.
+                    case 1:
+                        functions.getAllStudents(connection);
+                        break;
+                    // Add a student.
+                    case 2:
+                        // Ask user to input the student's first name, last name, email, and enrollment date.
+                        System.out.println("Enter the student's first name: ");
+                        in = new Scanner(System.in);
+                        String first_name = in.nextLine();
+
+                        System.out.println("Enter the student's last name: ");
+                        in = new Scanner(System.in);
+                        String last_name = in.nextLine();
+
+                        System.out.println("Enter the student's email: ");
+                        in = new Scanner(System.in);
+                        String email = in.nextLine();
+
+                        System.out.println("Enter the student's enrollment date: ");
+                        in = new Scanner(System.in);
+                        String enrollment_date = in.nextLine();
+
+                        functions.addStudent(connection, first_name, last_name, email, enrollment_date);
+                        break;
+                    // Update a student's email.
+                    case 3:
+                        // Ask user to input the student's id and new email.
+                        System.out.println("Enter the student's id: ");
+                        in = new Scanner(System.in);
+                        student_id_string = in.nextLine();
+                        student_id_int = Integer.valueOf(student_id_string);
+
+                        System.out.println("Enter the student's new email: ");
+                        in = new Scanner(System.in);
+                        String new_email = in.nextLine();
+
+                        functions.updateStudentEmail(connection, student_id_int, new_email);
+                        break;
+                    // Delete a student.
+                    case 4:
+                        // Ask user to input the student's id.
+                        System.out.println("Enter the student's id: ");
+                        in = new Scanner(System.in);
+                        student_id_string = in.nextLine();
+                        student_id_int = Integer.valueOf(student_id_string);
+
+                        functions.deleteStudent(connection, student_id_int);
+                        break;
+                    default:
+                        System.out.println("Exiting the program.");
+                        functions.closeConnection(connection);
+                        break;
+                }
+            }
         } catch (Exception e) {
-            System.out.println(e);
-        }
-    }
-
-    // Function That Retrieves and displays all records from the students table.
-    public static void getAllStudentsName(Connection connection) {
-        Statement statement = connection.createStatement();
-        statement.executeQuery("SELECT * FROM students;");
-        ResultSet resultSet = statement.getResultSet();
-
-        while (resultSet.next()) {
-            System.out.println(resultSet.getString("first_name") + " " + resultSet.getString("last_name"));
+            System.out.println("Error: " + e);
         }
     }
 }
