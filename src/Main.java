@@ -6,17 +6,19 @@ import java.util.Scanner;
 
 public class Main {
     public static void main(String[] args) {
-        Functions functions = new Functions();
+        Functions functions = new Functions();      // Contains the methods to perform CRUD operations on the students table.
 
         try {
             // Establish Connection to the PostgreSQL server.
             Connection connection = functions.getConnection();
             System.out.println("Connected to the PostgreSQL server successfully.");
 
+            // Initialize a few variables we'll need later.
             int option = 1;
             String student_id_string;
             int student_id_int;
 
+            // As long as the user doesn't choose to exit the program, keep asking for an option.
             while (option > 0 && option < 5){
                 System.out.println(
                         "\n Choose an option: \n " +
@@ -82,12 +84,14 @@ public class Main {
 
                         functions.deleteStudent(connection, student_id_int);
                         break;
+                    // Close the connection and exit the program.
                     default:
                         System.out.println("Exiting the program.");
                         functions.closeConnection(connection);
                         break;
                 }
             }
+        // Catch any exceptions that occur and alert the user.
         } catch (Exception e) {
             System.out.println("Error: " + e);
         }
